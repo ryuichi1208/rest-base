@@ -19,6 +19,22 @@ def deco_function(func):
 
 
 @deco_function
+def check_ident_file(ident_file_path):
+    """
+
+    """
+    if os.path.isfile(ident_file_path):
+        with open(ident_file_path, "r", encoding="utf_8") as f:
+            # 秘密鍵ファイルの整合性を確認
+            if "RSA" not in str(f.readline().split()):
+                print("[ERROR] The private key file format is invalid.")
+                sys.exit(1)
+    else:
+        # ファイルが存在しない場合は異常終了
+        print("[ERROR] The private key file did not exist." )
+        sys.exit(1)
+
+@deco_function
 def exec_ping(server_name):
     """
 
@@ -69,12 +85,19 @@ def option_parse():
 
 
 def main(args):
+    """
+
+    """
+
     msg = f"########## DEPLOY INFO ##########\n\
 DEPLOY_DATE  : {str(datetime.datetime.now())[:-7]}\n\
 SERVER_NAEME : {args.SERVER_NAME}\n\
 SERVICE_TYPE : {args.SERVICE}\n\
 IDENTITY_FILE : {args.i}"
     print(msg)
+
+    # 秘密鍵をチェック
+    check_ident_file(args.i)
 
     # pingを実行
     exec_ping(args.SERVER_NAME)
@@ -83,7 +106,7 @@ IDENTITY_FILE : {args.i}"
     exec_ssh(args.SERVER_NAME)
 
     if args.SERVICE == "all":
-        service = ["pwd", "uname"]
+        service = ["mod_perl", "httpd_proxy"]
     elif args.SERVICE == "test":
         service = ["ls -l", "uname -a", "pwd"]
     else:
