@@ -83,7 +83,7 @@ IDENTITY_FILE : {args.i}"
     exec_ssh(args.SERVER_NAME)
 
     if args.SERVICE == "all":
-        service = ["mod_perl", "httpd_proxy"]
+        service = ["pwd", "uname"]
     elif args.SERVICE == "test":
         service = ["ls -l", "uname -a", "pwd"]
     else:
